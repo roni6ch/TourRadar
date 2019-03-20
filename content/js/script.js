@@ -1,11 +1,35 @@
 var shortMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+let travelResults = "";
 (function ($) {
+    $(".spinner").show();
     $.get("https://api.myjson.com/bins/6iv3y")
         .done(function (data) {
+            $(".spinner").hide();
             console.log(data);
+            travelResults = data;
             createListView(data);
         });
 })(jQuery);
+
+$(".sortBy").change(() => {
+    $(".spinner").show();
+    switch ($(".sortBy :selected").val()) {
+        case "low_price":
+        $(".spinner").hide();
+            console.log(travelResults);
+            break;
+        case "high_price":
+            $(".spinner").hide();
+            travelResults = _.sortBy(travelResults.dates, ['eur']);
+            console.log("high_price", travelResults);
+            break;
+        case "long_tour":
+            break;
+        case "short_tour":
+            break;
+        default:
+    }
+});
 
 function createListView(results) {
     let output = '';
@@ -18,23 +42,23 @@ function createListView(results) {
             if (primaryImg.length > 0) {
                 let stars = ``;
 
-                if (typeof(result.rating) !== 'undefined'){
+                if (typeof (result.rating) !== 'undefined') {
                     let i = 0;
                     while (i < result.rating) {
                         stars += `<i class="fas fa-star"></i>`;
                         i++;
                     }
-                    if (result.rating !== parseInt(result.rating, 10)){
+                    if (result.rating !== parseInt(result.rating, 10)) {
                         stars += `<i class="fas fa-star-half-alt"></i>`;
                     }
-                } 
+                }
 
                 output += `<li class="travelWrapper row">
                 <div class="imageWrapper col-3 p-0">
                     <img src="${primaryImg[0].url}" class="primaryImg" alt="${result.name}" />
                 </div>
                 <div class="travelDetails col-9">
-                ${typeof(result.dates[0].discount) !== "undefined" ? `<div class="triangle"><span>${result.dates[0].discount}</span></div>`: null}
+                ${typeof (result.dates[0].discount) !== "undefined" ? `<div class="triangle"><span>${result.dates[0].discount}</span></div>` : ""}
                     <div class="row">
                         <div class="col-8">
                             <h1 class="travelTitle">${result.name}</h1>
@@ -89,7 +113,7 @@ function createListView(results) {
     $("#travelsResults").append(output);
 }
 
-function dateConvert(date){
+function dateConvert(date) {
     var dateObj = new Date(date);
     var month = dateObj.getUTCMonth();
     var day = dateObj.getUTCDate();

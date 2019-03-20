@@ -5,40 +5,72 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="theme-color" content="#000000">
-  <!--  <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">-->
+    <!--  <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">-->
 
     <!-- CSS -->
     <!-- <link rel="stylesheet" href="content/css/bootstrap.min.css" />-->
-    
+
     <!-- JS -->
- <!--   <script src="content/js/jquery-3.3.1.slim.min.js"></script>
+    <!--   <script src="content/js/jquery-3.3.1.slim.min.js"></script>
     <script src="content/js/bootstrap.min.js"></script> -->
     <!-- Font Awesome -->
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css">
-<!-- Bootstrap core CSS -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-<!-- Material Design Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.7.5/css/mdb.min.css" rel="stylesheet">
-<link rel="stylesheet" href="content/css/style.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css">
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.7.5/css/mdb.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="content/css/style.css" />
 
     <title>TourRadar - Front-end Challenge - Roni Chabra</title>
 </head>
 
 <body>
     <div id="wrapper">
-        <ul id="travelsResults"></div>
+        <div class="filters row justify-content-end">
+            <div class="col-1 p-0">
+                <p>Filter by</p>
+            </div>
+            <div class="col-3">
+                <select class="browser-default custom-select filterBy">
+                    <option selected>Departure Date</option>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                </select>
+            </div>
+            <div class="col-1 p-0">
+                <p>Sort by</p>
+            </div>
+            <div class="col-3">
+                <select class="browser-default custom-select sortBy">
+                    <option value="low_price" selected>Lowest price first</option>
+                    <option value="high_price">Highest price first</option>
+                    <option value="long_tour">Longest tour first</option>
+                    <option value="short_tour">Shortest tour first</option>
+                </select>
+            </div>
+        </div>
+        <ul id="travelsResults">
+    </div>
     </div>
 
-    <img src="content/Screenshot_1.png" style= "  margin: 0 auto; display: block;" />
-
-
+    <div class="spinner">
+            <div class="cube1"></div>
+            <div class="cube2"></div>
+          </div>
+    <img src="content/Screenshot_1.png" style="  margin: 0 auto; display: block;" />
     
-<!-- JQuery -->
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<!-- Bootstrap core JavaScript -->
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
-<!-- MDB core JavaScript -->
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.7.5/js/mdb.min.js"></script>
+
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.7.5/js/mdb.min.js"></script>
+        <script   src="content/js/lodash.min.js"></script>
 
     <script src="content/js/script.js"></script>
 </body>
