@@ -1,3 +1,4 @@
+/* CSS BROWSERS RESET */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -15,7 +16,8 @@ time, mark, audio, video {
 	padding: 0;
 	border: 0;
 	font-size: 100%;
-	font: inherit;
+    font: inherit;
+    font-family:Arial;
 	vertical-align: baseline;
 }
 /* HTML5 display-role reset for older browsers */
@@ -44,23 +46,150 @@ table {
 }
 
 /* index */
-
-
 .travelWrapper{    background: #fff;
-   
-    margin: 2% 1%;
-    float: left;
-    width: 98%;}
-   .travelWrapper .imageWrapper{
-        width: 30%;
-        float: left;
-    }
-.travelWrapper .primaryImg{
+    margin: 2% auto;
+    max-width: 860px;}
+.primaryImg{
     width:100%;
     display: block;
+    height: 100%;
 }
-.travelWrapper .travelDetails{
-    width:60%;
-    padding:5%;
+
+
+
+
+
+.travelDetails{
+    padding: 2% 3% 1%;
+}
+.travelTitle{
+    font-weight: bold;
+}
+.starsAndReviews{
+    margin-top: 10px;
+    float: left;
+}
+.stars{
+    float:left;
+}
+.reviews{
+    float: left;
+    font-size: 12px;
+    color: #c7d0d9;
+    margin-left: 10px;
+    margin-top: 3px;
+}
+.fa-star , .fa-star-half-alt{
+    color:#ffc101;
+    font-size: small;
+    padding: 0px 2px 0px 0px;
+}
+.description{
+    float:left;
+    margin-top: 10px;
+}
+.description p{
+  font-style : italic; 
+  color: #2c3e50;
+  font-size: 14px;
+  overflow: hidden;
+  line-height: 20px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.doTitles{
+    color: #818d99;
+    font-size: 10px;
+    float: left;
+    margin: 15px 0px 0px 0px;
+    text-transform: uppercase;
+    width: 110px;
+}
+.doTitles p{
+    margin: 8px 0px;
+}
+.doValues{    
+    color: #2c3e50;
+    font-size: 12px;
+    float: left;
+    margin: 15px 0px 0px 0px;
+    text-transform: capitalize;
+}
+.doValues p{
+    margin: 6px 0px;
+}
+.fromDate{float: right;}
+.from{
+    text-align: right;
+    font-size: 14px;
+    margin-bottom: 7px;
+}
+.price{
+    text-align: right;
+    font-weight: bold;
+    font-size: 18px;
+    color: #2c3e50;
+}
+.triangle{
+    width: 0;
+    height: 0;
+    border-top: 45px solid #e74c3c;
+    border-left: 45px solid transparent;
+    position: absolute;
+    top:0;
+    right:0;
+}
+.triangle span{
+    position: absolute;
+    top: -36px;
+    right: 1px;
+    color: #fff;
+    font-size: 12px;
+    display: block;
+    -webkit-transform: rotate(-320deg);
+    -moz-transform: rotate(-320deg);
+}
+.days{
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    margin: 10px 0px;
+    padding: 10px 0px;
+    width: 100%;
     float: right;
+
+}
+.days p{
+    color: #2c3e50;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+.dates{
+    float: left;
+    font-size: 12px;
+    color: #333333;
+}
+.dates p{
+    margin: 5px 0px;
+}
+.datesAndSpaces{float:left; width:100%;}
+.spaces{
+    float: right;
+    font-size: 12px;
+    color: #333333;
+}
+.spaces p{
+    margin: 5px 0px;
+}
+.viewMore{
+    background: #409cd1;
+    color: #fff;
+    width: 100%;
+    float: left;
+    border: 0px;
+    outline: 0;
+    padding: 8px;
+    margin-top: 5px;
+    font-size: 14px;
 }
