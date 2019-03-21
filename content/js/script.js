@@ -15,17 +15,29 @@ $(".sortBy").change(() => {
     $(".spinner").show();
     switch ($(".sortBy :selected").val()) {
         case "low_price":
-        $(".spinner").hide();
-            console.log(travelResults);
+            $(".spinner").hide();
+            Object.keys(travelResults).forEach((k) => {
+                travelResults[k].dates.sort((a, b) =>{
+                    return b.eur - a.eur;
+                });
+            });
+            createListView(travelResults);
             break;
         case "high_price":
             $(".spinner").hide();
-            travelResults = _.sortBy(travelResults.dates, ['eur']);
-            console.log("high_price", travelResults);
+
+            Object.keys(travelResults).forEach((k) => {
+                travelResults[k].dates.sort((a, b) =>{
+                    return a.eur - b.eur;
+                });
+            });
+            createListView(travelResults);
             break;
         case "long_tour":
+        $(".spinner").hide();
             break;
         case "short_tour":
+        $(".spinner").hide();
             break;
         default:
     }
@@ -33,6 +45,7 @@ $(".sortBy").change(() => {
 
 function createListView(results) {
     let output = '';
+    $("#travelsResults").html('');
     $.each(results, (index, result) => {
         if (result && result.images.length > 0 && result.dates.length > 0) {
             let primaryImg = result.images.filter((img) => {
@@ -53,7 +66,7 @@ function createListView(results) {
                     }
                 }
 
-                output += `<li class="travelWrapper row">
+                output += `<li class="travelWrapper row animated fadeIn">
                 <div class="imageWrapper col-md-3 p-0">
                     <img src="${primaryImg[0].url}" class="primaryImg" alt="${result.name}" />
                 </div>
