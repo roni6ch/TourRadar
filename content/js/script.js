@@ -54,13 +54,13 @@ function createListView(results) {
                 }
 
                 output += `<li class="travelWrapper row">
-                <div class="imageWrapper col-3 p-0">
+                <div class="imageWrapper col-md-3 p-0">
                     <img src="${primaryImg[0].url}" class="primaryImg" alt="${result.name}" />
                 </div>
-                <div class="travelDetails col-9">
+                <div class="travelDetails col-md-9 pb-2">
                 ${typeof (result.dates[0].discount) !== "undefined" ? `<div class="triangle"><span>${result.dates[0].discount}</span></div>` : ""}
                     <div class="row">
-                        <div class="col-8">
+                        <div class="col-md-8">
                             <h1 class="travelTitle">${result.name}</h1>
                             <div class="starsAndReviews">
                                 <div class="stars">${stars}</div>
@@ -82,7 +82,7 @@ function createListView(results) {
                             </div>
                             </div>
                         </div>
-                        <div class="col-4">
+                        <div class="col-md-4 mt-2">
                             <div class="fromDate">
                                 <p class="from">From</p>
                                 <p class="price">&euro; ${new Intl.NumberFormat('en-US').format(result.dates[0].eur)}</p>
@@ -90,7 +90,11 @@ function createListView(results) {
                             <div class="days">
                                 <p> ${result.length} days</p>
                             </div>
-                            <div class="datesAndSpaces">
+                            <div class="mobileDays">
+                            <p class="daysTitle">Days</p>
+                            <p class="daysNumber">${result.length}</p>
+                        </div>
+                            <div class="datesAndSpaces mt-1">
                                 <div class="dates">
                                     <p> ${result.dates[0].start ? dateConvert(result.dates[0].start) : ""}</p>
                                     <p> ${result.dates[1].start ? dateConvert(result.dates[1].start) : ""}</p>
@@ -100,7 +104,7 @@ function createListView(results) {
                                     <p> ${result.dates[1].availability ? result.dates[0].availability + " spaces left" : ""}</p>
                                 </div>
                             </div>
-                            <button class="viewMore">View More</button>
+                            <button class="viewMore col-6 col-sm-6 col-md-12">View More</button>
                         </div>
                     </div>
                     

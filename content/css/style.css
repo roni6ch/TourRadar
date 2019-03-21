@@ -114,12 +114,19 @@ table {
     width: 100%;
 }
 
+.filters > div{
+    width: 35%;
+    float: right;
+}
+
 .filters p{
 line-height: 43px;
 text-align: right;
 font-size: 14px;
 font-weight: bold;
 color: #818d99;
+width: 25%;
+float: left;
 }
 .filters select{
     -webkit-appearance: none;
@@ -127,7 +134,9 @@ color: #818d99;
     appearance: none;
     font-size: 14px;
     height: 43px;
-    border-radius: 3px;}
+    border-radius: 3px;
+    width: 70%;
+    float: right;}
 
     select::-ms-expand {
         display: none;
@@ -207,13 +216,24 @@ color: #818d99;
     margin: 6px 0px;
 }
 .fromDate{float: right;}
-.from{
+.mobileDays{float:left; display: none;}
+.from , .daysTitle{
     text-align: right;
     font-size: 14px;
     margin-bottom: 7px;
 }
+.daysTitle{
+    text-align: left;
+}
 .price{
     text-align: right;
+    font-weight: bold;
+    font-size: 18px;
+    color: #2c3e50;
+}
+.daysNumber{
+    
+    text-align: left;
     font-weight: bold;
     font-size: 18px;
     color: #2c3e50;
@@ -273,10 +293,20 @@ color: #818d99;
     background: #409cd1;
     color: #fff;
     width: 100%;
-    float: left;
     border: 0px;
     outline: 0;
     padding: 8px;
     margin-top: 5px;
     font-size: 14px;
+    float: right;
 }
+
+@media (max-width: 768px) {
+    .days{display:none}
+    .mobileDays{display:block;}
+    .filters select{float:left; width:100%}
+    .filters p{width:100%;
+        line-height: 22px;
+        text-align: left;}
+        .filters > div{width:50%;}
+ }
