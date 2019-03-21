@@ -3,7 +3,7 @@ let travelResults = "";
 (function ($) {
     $(".spinner").show();
     $.get("https://api.myjson.com/bins/6iv3y")
-        .done(function (data) {
+        .done((data) => {
             $(".spinner").hide();
             console.log(data);
             travelResults = data;
@@ -16,31 +16,25 @@ $(".sortBy").change(() => {
     switch ($(".sortBy :selected").val()) {
         case "low_price":
             $(".spinner").hide();
-            Object.keys(travelResults).forEach((k) => {
-                travelResults[k].dates.sort((a, b) =>{
-                    return b.eur - a.eur;
-                });
-            });
-            createListView(travelResults);
+            travelResults = _.orderBy(travelResults, [function (r) { if (r.dates.length > 0) return r.dates[0].eur; return 0 }], ['asc']);
             break;
         case "high_price":
             $(".spinner").hide();
-
-            Object.keys(travelResults).forEach((k) => {
-                travelResults[k].dates.sort((a, b) =>{
-                    return a.eur - b.eur;
-                });
-            });
-            createListView(travelResults);
+            travelResults = _.orderBy(travelResults, [function (r) { if (r.dates.length > 0) return r.dates[0].eur; return 0 }], ['desc']);
             break;
         case "long_tour":
-        $(".spinner").hide();
+            $(".spinner").hide();
+            travelResults = _.orderBy(travelResults, [function (r) { return r.length; }], ['desc']);
             break;
         case "short_tour":
-        $(".spinner").hide();
+            $(".spinner").hide();
+            travelResults = _.orderBy(travelResults, [function (r) { return r.length; }], ['asc']);
             break;
         default:
+            createListView(travelResults);
+            break;
     }
+    createListView(travelResults);
 });
 
 function createListView(results) {
@@ -52,6 +46,9 @@ function createListView(results) {
                 if (typeof (img.is_primary) !== 'undefined' && img.is_primary && typeof (img.url) !== 'undefined' && img.url !== "")
                     return img;
             });
+            if (primaryImg.length == 0 && typeof (result.images[0].url) !== 'undefined' && result.images[0].url !== ""){
+                primaryImg = result.images;
+            }
             if (primaryImg.length > 0) {
                 let stars = ``;
 
