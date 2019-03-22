@@ -226,6 +226,14 @@ float: left;
 .stars{
     float:left;
 }
+.heart{
+  position: absolute;
+  top: 0;
+  right: 0;
+  right: 0;
+  padding: 10px;
+  height: 44px;
+}
 .reviews{
     float: left;
     font-size: 12px;

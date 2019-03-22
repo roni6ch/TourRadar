@@ -2,10 +2,12 @@ const shortMonthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug',
 const fullMonthNames = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
 ];
-let travelResults = "";
+let travelResults = [];
 let filteredList = [];
+let sortedList = [];
+let filteredDate = "";
 (function ($) {
-    $(".spinner").show();
+    spinner(true);
     $.get("https://api.myjson.com/bins/6iv3y")
         .done((data) => {
             $(".spinner").hide();
@@ -17,8 +19,35 @@ let filteredList = [];
 })(jQuery);
 
 $(".sortBy").change(() => {
-    $(".spinner").show();
-    let sortedList = [];
+    sortList();
+});
+
+$(".filterBy").change(() => {
+    spinner(true);
+    if ($(".filterBy :selected").val() == "resetFilter"){
+        filteredList = [];
+    }
+    else{
+        filteredDate = getNumberedDate($(".filterBy :selected").val());
+        filteredList = JSON.parse(JSON.stringify(travelResults));
+        for (let result of filteredList) {
+            _.remove(result.dates, function (d) {
+                return !d.start.includes(filteredDate);
+            });
+        }
+    }
+    sortList();
+});
+
+function spinner(bool){
+    if (bool){
+        $(".spinner").show();
+    }else{
+        $(".spinner").hide();
+    }
+}
+function sortList(){
+    spinner(true);
     let list = filteredList.length > 0 ? filteredList : travelResults;
     switch ($(".sortBy :selected").val()) {
         case "popularity":
@@ -40,28 +69,9 @@ $(".sortBy").change(() => {
             sortedList = list;
             break;
     }
-    $(".spinner").hide();
     createListView(sortedList);
-});
-
-$(".filterBy").change(() => {
-    $(".spinner").show();
-    let date = getNumberedDate($(".filterBy :selected").val());
-    console.log(date);
-    //loop list and get travles by date
-
-    filteredList = JSON.parse(JSON.stringify(travelResults));
-        for (let result of filteredList) {
-            _.remove(result.dates, function(d) {
-                return !d.start.includes(date);
-            });
-        }
-     
-      
-    $(".spinner").hide();
-    createListView(filteredList);
-});
-
+    spinner(false);
+}
 function createListView(results) {
     let output = '';
     $("#travelsResults").html('');
@@ -80,6 +90,7 @@ function createListView(results) {
                 output += `<li class="travelWrapper row animated fadeIn">
                 <div class="imageWrapper col-md-3 p-0">
                     <img src="${primaryImg[0].url}" class="primaryImg" alt="${result.name}" />
+                    <img src="./content/images/heart.png" class="heart" alt="favorite" />
                 </div>
                 <div class="travelDetails col-md-9 pb-2">
                 ${typeof (result.dates[0].discount) !== "undefined" ? `<div class="triangle"><span>-${result.dates[0].discount}</span></div>` : ""}
@@ -101,7 +112,7 @@ function createListView(results) {
                                 </div>
                                 <div class="doValues">
                                 <p>${result.cities.length} destinations</p>
-                                <p>start / end ?</p>
+                                <p>${result.cities[0].name} / ${result.cities[result.cities.length - 1].name}</p>
                                 <p>${result.operator_name}</p>
                             </div>
                             </div>
@@ -148,6 +159,7 @@ function createMonthsFilter() {
             return fullMonthName(r.start);
         }))
     })));
+    filteredMonths = _.sortBy(filteredMonths, function(date) {return new Date(date);});
     //insert filtered list select option
     filteredMonths.forEach((date) => {
         output += `<option value="${date}">${date}</option>`;
