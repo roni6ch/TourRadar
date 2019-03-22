@@ -1,5 +1,9 @@
-var shortMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const shortMonthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const fullMonthNames = ["January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+];
 let travelResults = "";
+let filteredList = [];
 (function ($) {
     $(".spinner").show();
     $.get("https://api.myjson.com/bins/6iv3y")
@@ -8,67 +12,77 @@ let travelResults = "";
             console.log(data);
             travelResults = data;
             createListView(data);
+            createMonthsFilter();
         });
 })(jQuery);
 
 $(".sortBy").change(() => {
     $(".spinner").show();
+    let sortedList = [];
+    let list = filteredList.length > 0 ? filteredList : travelResults;
     switch ($(".sortBy :selected").val()) {
+        case "popularity":
+            sortedList = list;
+            break;
         case "low_price":
-            $(".spinner").hide();
-            travelResults = _.orderBy(travelResults, [function (r) { if (r.dates.length > 0) return r.dates[0].eur; return 0 }], ['asc']);
+            sortedList = _.orderBy(list, [(r) => { if (r.dates.length > 0) return r.dates[0].eur; return 0 }], ['asc']);
             break;
         case "high_price":
-            $(".spinner").hide();
-            travelResults = _.orderBy(travelResults, [function (r) { if (r.dates.length > 0) return r.dates[0].eur; return 0 }], ['desc']);
+            sortedList = _.orderBy(list, [(r) => { if (r.dates.length > 0) return r.dates[0].eur; return 0 }], ['desc']);
             break;
         case "long_tour":
-            $(".spinner").hide();
-            travelResults = _.orderBy(travelResults, [function (r) { return r.length; }], ['desc']);
+            sortedList = _.orderBy(list, [(r) => { return r.length; }], ['desc']);
             break;
         case "short_tour":
-            $(".spinner").hide();
-            travelResults = _.orderBy(travelResults, [function (r) { return r.length; }], ['asc']);
+            sortedList = _.orderBy(list, [(r) => { return r.length; }], ['asc']);
             break;
         default:
-            createListView(travelResults);
+            sortedList = list;
             break;
     }
-    createListView(travelResults);
+    $(".spinner").hide();
+    createListView(sortedList);
+});
+
+$(".filterBy").change(() => {
+    $(".spinner").show();
+    let date = getNumberedDate($(".filterBy :selected").val());
+    console.log(date);
+    //loop list and get travles by date
+
+    filteredList = JSON.parse(JSON.stringify(travelResults));
+        for (let result of filteredList) {
+            _.remove(result.dates, function(d) {
+                return !d.start.includes(date);
+            });
+        }
+     
+      
+    $(".spinner").hide();
+    createListView(filteredList);
 });
 
 function createListView(results) {
     let output = '';
     $("#travelsResults").html('');
     $.each(results, (index, result) => {
-        if (result && result.images.length > 0 && result.dates.length > 0) {
+        if (result && typeof (result.dates) !== "undefined" && typeof (result.images) !== "undefined" && result.images.length > 0 && result.dates.length > 0) {
+
             let primaryImg = result.images.filter((img) => {
                 if (typeof (img.is_primary) !== 'undefined' && img.is_primary && typeof (img.url) !== 'undefined' && img.url !== "")
                     return img;
             });
-            if (primaryImg.length == 0 && typeof (result.images[0].url) !== 'undefined' && result.images[0].url !== ""){
+            if (primaryImg.length == 0 && typeof (result.images[0].url) !== 'undefined' && result.images[0].url !== "") {
                 primaryImg = result.images;
             }
             if (primaryImg.length > 0) {
-                let stars = ``;
-
-                if (typeof (result.rating) !== 'undefined') {
-                    let i = 0;
-                    while (i < result.rating) {
-                        stars += `<i class="fas fa-star"></i>`;
-                        i++;
-                    }
-                    if (result.rating !== parseInt(result.rating, 10)) {
-                        stars += `<i class="fas fa-star-half-alt"></i>`;
-                    }
-                }
-
+                let stars = getRatingStars(result.rating);
                 output += `<li class="travelWrapper row animated fadeIn">
                 <div class="imageWrapper col-md-3 p-0">
                     <img src="${primaryImg[0].url}" class="primaryImg" alt="${result.name}" />
                 </div>
                 <div class="travelDetails col-md-9 pb-2">
-                ${typeof (result.dates[0].discount) !== "undefined" ? `<div class="triangle"><span>${result.dates[0].discount}</span></div>` : ""}
+                ${typeof (result.dates[0].discount) !== "undefined" ? `<div class="triangle"><span>-${result.dates[0].discount}</span></div>` : ""}
                     <div class="row">
                         <div class="col-md-8">
                             <h1 class="travelTitle">${result.name}</h1>
@@ -106,12 +120,12 @@ function createListView(results) {
                         </div>
                             <div class="datesAndSpaces mt-1">
                                 <div class="dates">
-                                    <p> ${result.dates[0].start ? dateConvert(result.dates[0].start) : ""}</p>
-                                    <p> ${result.dates[1].start ? dateConvert(result.dates[1].start) : ""}</p>
+                                    <p> ${result.dates.length > 0 && result.dates[0].start ? dateConvert(result.dates[0].start) : ""}</p>
+                                    <p> ${result.dates.length > 1 && result.dates[1].start ? dateConvert(result.dates[1].start) : ""}</p>
                                 </div>
                                 <div class="spaces">
-                                    <p> ${result.dates[0].availability ? result.dates[0].availability + " spaces left" : ""}</p>
-                                    <p> ${result.dates[1].availability ? result.dates[0].availability + " spaces left" : ""}</p>
+                                    <p> ${result.dates.length > 0 && result.dates[0].availability ? result.dates[0].availability + " spaces left" : ""}</p>
+                                    <p> ${result.dates.length > 1 && result.dates[1].availability ? result.dates[0].availability + " spaces left" : ""}</p>
                                 </div>
                             </div>
                             <button class="viewMore col-6 col-sm-6 col-md-12">View More</button>
@@ -127,12 +141,55 @@ function createListView(results) {
     $("#travelsResults").append(output);
 }
 
+function createMonthsFilter() {
+    let output = '';
+    let filteredMonths = _.uniq(_.flatten(_.map(travelResults, (result) => {
+        return _.uniq(_.map(result.dates, (r) => {
+            return fullMonthName(r.start);
+        }))
+    })));
+    //insert filtered list select option
+    filteredMonths.forEach((date) => {
+        output += `<option value="${date}">${date}</option>`;
+    });
+    $(".filterBy").append(output);
+}
+function getNumberedDate(date) {
+    var dateObj = new Date(date);
+    var month = dateObj.getMonth();
+    var year = dateObj.getFullYear();
+    newdate = year + "-" + ("0" + (month + 1)).slice(-2);
+    return newdate;
+}
+function fullMonthName(date) {
+    var dateObj = new Date(date);
+    var month = dateObj.getMonth();
+    var year = dateObj.getFullYear();
+
+    newdate = fullMonthNames[month] + " " + year;
+    return newdate;
+}
 function dateConvert(date) {
     var dateObj = new Date(date);
-    var month = dateObj.getUTCMonth();
-    var day = dateObj.getUTCDate();
-    var year = dateObj.getUTCFullYear();
+    var month = dateObj.getMonth();
+    var day = dateObj.getDate();
+    var year = dateObj.getFullYear();
 
-    newdate = day + " " + shortMonths[month] + " " + year;
+    newdate = day + " " + shortMonthNames[month] + " " + year;
     return newdate;
+}
+
+function getRatingStars(rating) {
+    let stars = '';
+    if (typeof (rating) !== 'undefined') {
+        let i = 0;
+        while (i < parseInt(rating, 10)) {
+            stars += `<i class="fas fa-star"></i>`;
+            i++;
+        }
+        if (rating !== parseInt(rating, 10)) {
+            stars += `<i class="fas fa-star-half-alt"></i>`;
+        }
+        return stars;
+    }
 }
