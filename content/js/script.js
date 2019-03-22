@@ -15,6 +15,7 @@ let filteredDate = "";
             travelResults = data;
             createListView(data);
             createMonthsFilter();
+            spinner(false);
         });
 })(jQuery);
 
@@ -24,11 +25,11 @@ $(".sortBy").change(() => {
 
 $(".filterBy").change(() => {
     spinner(true);
-    if ($(".filterBy :selected").val() == "resetFilter"){
+    if ($(".filterBy :selected").val() == "resetFilter" || typeof ($(".filterBy :selected").val()) === "undefined") {
         filteredList = [];
     }
-    else{
-        filteredDate = getNumberedDate($(".filterBy :selected").val());
+    else {
+        filteredDate = convertDate($(".selectpicker").val(), 'getNumberedDate');
         filteredList = JSON.parse(JSON.stringify(travelResults));
         for (let result of filteredList) {
             _.remove(result.dates, function (d) {
@@ -39,39 +40,6 @@ $(".filterBy").change(() => {
     sortList();
 });
 
-function spinner(bool){
-    if (bool){
-        $(".spinner").show();
-    }else{
-        $(".spinner").hide();
-    }
-}
-function sortList(){
-    spinner(true);
-    let list = filteredList.length > 0 ? filteredList : travelResults;
-    switch ($(".sortBy :selected").val()) {
-        case "popularity":
-            sortedList = list;
-            break;
-        case "low_price":
-            sortedList = _.orderBy(list, [(r) => { if (r.dates.length > 0) return r.dates[0].eur; return 0 }], ['asc']);
-            break;
-        case "high_price":
-            sortedList = _.orderBy(list, [(r) => { if (r.dates.length > 0) return r.dates[0].eur; return 0 }], ['desc']);
-            break;
-        case "long_tour":
-            sortedList = _.orderBy(list, [(r) => { return r.length; }], ['desc']);
-            break;
-        case "short_tour":
-            sortedList = _.orderBy(list, [(r) => { return r.length; }], ['asc']);
-            break;
-        default:
-            sortedList = list;
-            break;
-    }
-    createListView(sortedList);
-    spinner(false);
-}
 function createListView(results) {
     let output = '';
     $("#travelsResults").html('');
@@ -88,11 +56,11 @@ function createListView(results) {
             if (primaryImg.length > 0) {
                 let stars = getRatingStars(result.rating);
                 output += `<li class="travelWrapper row animated fadeIn">
-                <div class="imageWrapper col-md-3 p-0">
+                <div class="imageWrapper col-12 col-sm-6 col-md-3 p-0">
                     <img src="${primaryImg[0].url}" class="primaryImg" alt="${result.name}" />
                     <img src="./content/images/heart.png" class="heart" alt="favorite" />
                 </div>
-                <div class="travelDetails col-md-9 pb-2">
+                <div class="travelDetails col-12 col-sm-6 col-md-9 pb-2">
                 ${typeof (result.dates[0].discount) !== "undefined" ? `<div class="triangle"><span>-${result.dates[0].discount}</span></div>` : ""}
                     <div class="row">
                         <div class="col-md-8">
@@ -131,12 +99,12 @@ function createListView(results) {
                         </div>
                             <div class="datesAndSpaces mt-1">
                                 <div class="dates">
-                                    <p> ${result.dates.length > 0 && result.dates[0].start ? dateConvert(result.dates[0].start) : ""}</p>
-                                    <p> ${result.dates.length > 1 && result.dates[1].start ? dateConvert(result.dates[1].start) : ""}</p>
+                                    <p> ${result.dates.length > 0 && result.dates[0].start ? convertDate(result.dates[0].start, 'dateConvert') : ""}</p>
+                                    <p> ${result.dates.length > 1 && result.dates[1].start ? convertDate(result.dates[1].start, 'dateConvert') : ""}</p>
                                 </div>
                                 <div class="spaces">
                                     <p> ${result.dates.length > 0 && result.dates[0].availability ? result.dates[0].availability + " spaces left" : ""}</p>
-                                    <p> ${result.dates.length > 1 && result.dates[1].availability ? result.dates[0].availability + " spaces left" : ""}</p>
+                                    <p> ${result.dates.length > 1 && result.dates[1].availability ? result.dates[1].availability + " spaces left" : ""}</p>
                                 </div>
                             </div>
                             <button class="viewMore col-6 col-sm-6 col-md-12">View More</button>
@@ -152,43 +120,88 @@ function createListView(results) {
     $("#travelsResults").append(output);
 }
 
+function spinner(bool) {
+    if (bool) {
+        $(".filters").hide();
+        $(".spinner").show();
+    } else {
+        $(".filters").show();
+        $(".spinner").hide();
+    }
+}
+function sortList() {
+    spinner(true);
+    let list = filteredList.length > 0 ? filteredList : travelResults;
+    switch ($(".sortBy :selected").val()) {
+        case "popularity":
+            sortedList = list;
+            break;
+        case "low_price":
+            sortedList = _.orderBy(list, [(r) => { if (r.dates.length > 0) return r.dates[0].eur; return 0 }], ['asc']);
+            break;
+        case "high_price":
+            sortedList = _.orderBy(list, [(r) => { if (r.dates.length > 0) return r.dates[0].eur; return 0 }], ['desc']);
+            break;
+        case "long_tour":
+            sortedList = _.orderBy(list, [(r) => { return r.length; }], ['desc']);
+            break;
+        case "short_tour":
+            sortedList = _.orderBy(list, [(r) => { return r.length; }], ['asc']);
+            break;
+        default:
+            sortedList = list;
+            break;
+    }
+    createListView(sortedList);
+    spinner(false);
+}
 function createMonthsFilter() {
+    /* select filter */
     let output = '';
     let filteredMonths = _.uniq(_.flatten(_.map(travelResults, (result) => {
         return _.uniq(_.map(result.dates, (r) => {
-            return fullMonthName(r.start);
+            return convertDate(r.start, 'fullMonthName');
         }))
     })));
-    filteredMonths = _.sortBy(filteredMonths, function(date) {return new Date(date);});
-    //insert filtered list select option
+    filteredMonths = _.orderBy(filteredMonths, [(date) => { return new Date(date); }], ['desc']);
+    let newYear = "";
+    output += `<optgroup label="Departure Date"><option value="resetFilter">Remove Filter</option></optgroup>`;
     filteredMonths.forEach((date) => {
+        if (date.split(" ")[1] !== newYear) {
+            newYear = date.split(" ")[1];
+            output += `<optgroup label="${newYear}">`;
+        }
         output += `<option value="${date}">${date}</option>`;
     });
-    $(".filterBy").append(output);
-}
-function getNumberedDate(date) {
-    var dateObj = new Date(date);
-    var month = dateObj.getMonth();
-    var year = dateObj.getFullYear();
-    newdate = year + "-" + ("0" + (month + 1)).slice(-2);
-    return newdate;
-}
-function fullMonthName(date) {
-    var dateObj = new Date(date);
-    var month = dateObj.getMonth();
-    var year = dateObj.getFullYear();
+    output += `</optgroup>`;
+    $(".selectpicker").html(output);
+    $('.selectpicker').selectpicker('refresh');
 
-    newdate = fullMonthNames[month] + " " + year;
-    return newdate;
+
 }
-function dateConvert(date) {
+
+
+function convertDate(date, convertCase) {
     var dateObj = new Date(date);
-    var month = dateObj.getMonth();
     var day = dateObj.getDate();
+    var month = dateObj.getMonth();
     var year = dateObj.getFullYear();
-
-    newdate = day + " " + shortMonthNames[month] + " " + year;
-    return newdate;
+    let newDate = ""
+    switch (convertCase) {
+        case "getNumberedDate":
+            newDate = year + "-" + ("0" + (month + 1)).slice(-2);
+            break;
+        case "fullMonthName":
+            newDate = fullMonthNames[month] + " " + year;
+            break;
+        case "dateConvert":
+            newDate = day + " " + shortMonthNames[month] + " " + year;
+            break;
+        default:
+            newDate = day + " " + shortMonthNames[month] + " " + year;
+            break;
+    }
+    return newDate;
 }
 
 function getRatingStars(rating) {

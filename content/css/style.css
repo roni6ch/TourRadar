@@ -194,7 +194,12 @@ float: left;
     height: 43px;
     border-radius: 3px;
     width: 70%;
-    float: right;}
+    float: right;
+    background: #fff no-repeat 90%;
+    background-image: url(../images/arrow.png);
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);
+    cursor: pointer;
+  }
 
     select::-ms-expand {
         display: none;
@@ -211,8 +216,40 @@ float: left;
             position: absolute;
             pointer-events: none;
         }
-        
-
+        .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn){
+          
+    width: 75%;
+    padding: 0;
+        }
+        .bootstrap-select .dropdown-toggle .filter-option-inner-inner{
+          text-transform: none;
+          color: #495057;}
+        .bootstrap-select .dropdown-menu{
+          max-height: 500px !important;}
+        .custom-select{
+          background-color:transparent;
+          
+    border: 0px ;
+    width: 88%;
+        }
+        .dropdown option{
+          display: none;
+        }
+        .btn-light.dropdown-toggle{    -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      padding: 11px;
+      background-color: #ffffff!important;
+      color: #495057;
+      background: #fff no-repeat 90%!important;
+      background-image: url(../images/arrow.png)!important;font-size: 14px;
+      height: 43px;
+      border-radius: 3px;
+      width: 88%;
+      float: right;
+      margin: 0;
+    }    
+    .dropdown-toggle::after{display: none;}
 .travelDetails{
     padding: 2% 3% 1%;
 }
@@ -375,4 +412,5 @@ float: left;
         line-height: 22px;
         text-align: left;}
         .filters > div{width:50%;}
+        .custom-select,.btn-light.dropdown-toggle{width:100% !important; }
  }
