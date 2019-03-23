@@ -15,9 +15,17 @@ let filteredDate = "";
             travelResults = data;
             createListView(data);
             createMonthsFilter();
+            $('.sortPicker').selectpicker();
             spinner(false);
         });
 })(jQuery);
+
+$(document).on('click', '[data-toggle="lightbox"]', function(event) {
+    event.preventDefault();
+    $(this).ekkoLightbox({
+        showArrows:true
+    });
+});
 
 $(".sortBy").change(() => {
     sortList();
@@ -57,8 +65,8 @@ function createListView(results) {
                 let stars = getRatingStars(result.rating);
                 output += `<li class="travelWrapper row animated fadeIn">
                 <div class="imageWrapper col-12 col-sm-6 col-md-3 p-0">
-                    <img src="${primaryImg[0].url}" class="primaryImg" alt="${result.name}" />
-                    <img src="./content/images/heart.png" class="heart" alt="favorite" />
+                    <a href="${primaryImg[0].url}" class="lightbox" data-gallery=${result.name} data-toggle="lightbox" data-type="image"><img src="${primaryImg[0].url}" class="primaryImg " alt="${result.name}"  /></a>
+                   <img src="./content/images/heart.png" class="heart" alt="favorite" />
                 </div>
                 <div class="travelDetails col-12 col-sm-6 col-md-9 pb-2">
                 ${typeof (result.dates[0].discount) !== "undefined" ? `<div class="triangle"><span>-${result.dates[0].discount}</span></div>` : ""}

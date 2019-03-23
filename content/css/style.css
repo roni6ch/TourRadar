@@ -65,6 +65,9 @@ table {
 	border-collapse: collapse;
 	border-spacing: 0;
 }
+.hidden {
+  display:none;
+}
 /*spinner*/
 .spinner {
   margin: 200px auto;
@@ -74,7 +77,9 @@ table {
   left: 0;
   right: 0;
   }
-  
+  .lightbox img:hover{
+    opacity:0.85;
+  }
   .cube1, .cube2 {
     background-color: #333;
     width: 15px;
@@ -157,6 +162,7 @@ table {
     
     margin: 2% auto;
     max-width: 860px;
+    padding: 0% 2%;
 }
 .travelWrapper{    background: #fff;
    
@@ -170,8 +176,9 @@ table {
     
     float: left;
     width: 100%;
+    margin-top: 14px;
 }
-
+.filters{display:none;}
 .filters > div{
     width: 35%;
     float: right;
@@ -200,6 +207,19 @@ float: left;
     box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);
     cursor: pointer;
   }
+  .filters select:hover{
+    
+    background-color: #ededed!important;
+  }
+  .filters select:hover option{
+    background: #fff no-repeat 90%;
+  }
+
+  .filters option:focus, .filters option:hover {
+    color: #16181b;
+    text-decoration: none;
+    background-color: #f8f9fa;
+}
 
     select::-ms-expand {
         display: none;
@@ -413,4 +433,5 @@ float: left;
         text-align: left;}
         .filters > div{width:50%;}
         .custom-select,.btn-light.dropdown-toggle{width:100% !important; }
- }
+        .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn){width:100%;}
+      }
