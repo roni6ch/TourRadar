@@ -49,7 +49,7 @@ function createRows(result, primaryImg, stars) {
     return `<li class="travelWrapper row  slide-top ">
     <div class="imageWrapper col-12 col-sm-6 col-md-3 p-0">
         <a href="${primaryImg[0].url}" class="lightbox" data-gallery=${result.name} data-toggle="lightbox" data-type="image">
-            <img src="${primaryImg[0].url}" class="primaryImg" alt="${result.name}" /></a>
+            <img src="${primaryImg[0].url}" class="primaryImg" title="${result.name}" alt="${result.name}" /></a>
        <div class="heart" />
     </div>
     <div class="travelDetails col-12 col-sm-6 col-md-9 pb-2">

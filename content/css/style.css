@@ -163,7 +163,7 @@ table {
   width: 35%;
   float: right;
 }
-.filters p {
+.filters h4 {
   line-height: 43px;
   text-align: right;
   font-size: 14px;
@@ -424,7 +424,7 @@ select::-ms-expand {
       float: left;
       width: 100%;
  }
-  .filters p {
+  .filters h4 {
       width: 100%;
       line-height: 22px;
       text-align: left;
