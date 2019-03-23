@@ -63,10 +63,10 @@ function createListView(results) {
             }
             if (primaryImg.length > 0) {
                 let stars = getRatingStars(result.rating);
-                output += `<li class="travelWrapper row animated fadeIn">
+                output += `<li class="travelWrapper row  slide-top ">
                 <div class="imageWrapper col-12 col-sm-6 col-md-3 p-0">
                     <a href="${primaryImg[0].url}" class="lightbox" data-gallery=${result.name} data-toggle="lightbox" data-type="image"><img src="${primaryImg[0].url}" class="primaryImg " alt="${result.name}"  /></a>
-                   <img src="./content/images/heart.png" class="heart" alt="favorite" />
+                   <div class="heart"/>
                 </div>
                 <div class="travelDetails col-12 col-sm-6 col-md-9 pb-2">
                 ${typeof (result.dates[0].discount) !== "undefined" ? `<div class="triangle"><span>-${result.dates[0].discount}</span></div>` : ""}
