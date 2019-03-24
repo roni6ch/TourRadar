@@ -202,7 +202,7 @@ function createMonthsFilter() {
     filteredMonths = _.orderBy(filteredMonths, [(date) => { return new Date(fixIEDate(date)); }], ['desc']);
     /* create the dynamic select option box */
     let newYear = "";
-    output += `<optgroup label="Departure Date"><option value="resetFilter">Remove Filter</option></optgroup>`;
+    output += `<optgroup><option value="resetFilter">Departure Date</option></optgroup>`;
     filteredMonths.forEach((date) => {
         if (date.split(" ")[1] !== newYear) {
             newYear = date.split(" ")[1];
