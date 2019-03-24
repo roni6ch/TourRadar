@@ -15,6 +15,7 @@ let filteredDate = "";
             createListView(data);
             createMonthsFilter();
             $('.sortPicker').selectpicker();
+            $('.datesAndAvailability').popover({ html: true, container: 'body', trigger: 'focus' })
             spinner(false);
         });
 })(jQuery);
@@ -29,7 +30,7 @@ function createListView(results) {
     let output = '';
     $("#travelResults").html('');
 
-    results.forEach((result,index) => {
+    results.forEach((result, index) => {
         let primaryImg = [{ url: "" }];
         if (checkValidation(result) && checkValidation(result.dates)) {
             if (checkValidation(result.images)) {
@@ -41,25 +42,22 @@ function createListView(results) {
             else {
                 primaryImg[0].url = "content/images/noimage.png";
             }
-            output += createRows(result, primaryImg,index);
+            output += createRows(result, primaryImg);
         }
     });
 
     $("#travelResults").append(output);
+    $('.datesAndAvailability').popover({ html: true, container: 'body', trigger: 'focus' })
 }
-function createRows(result, primaryImg,index) {
-    let gallery = "";
-    let stars = typeof (result.rating) !== "undefined" ? getRatingStars(result.rating) : "";
-    //get all images by LAZY LOADING.
-    primaryImg.forEach((img, i) => {
-        if (typeof (img.url) !== "undefined" && img.url !== "")
-            gallery += `<a href="${img.url}" class="lightbox ${i !== 0 ? ' hidden ' : ''}" data-gallery="${result.name}" data-toggle="lightbox" data-type="image">
-            ${i == 0 ? `<img src="${img.url}" class="primaryImg" title="${result.name}" alt="${result.name}" />` : ''}  </a>`;
-    })
+function createRows(result, primaryImg) {
 
-    return `<li id="accordion" class="travelWrapper row slide-top ">
+    let stars = typeof (result.rating) !== "undefined" ? getRatingStars(result.rating) : "";
+    let viewMoreDates = moreDates(result);
+    let gallery = getGallery(result,primaryImg);
+
+    return `<li class="travelWrapper row slide-top ">
     <div class="imageWrapper col-12 col-sm-6 col-md-3 p-0">
-    ${ gallery }
+    ${gallery}
         <div class="heart" />
     </div>
     <div class="travelDetails col-12 col-sm-6 col-md-9 pb-2">
@@ -110,28 +108,52 @@ function createRows(result, primaryImg,index) {
                     </div>
                 </div>
                 
-                <div id="viewMore-${index}" class="collapse datesAndSpaces mt-1 " aria-labelledby="headingOne" data-parent="#accordion">
-                    ${console.log("todo - fix accordion")/*  travelResults[index].forEach((res) => {
-                          `<div class="datesAndSpaces mt-1">
-                          <div class="dates">
-                              <p> ${typeof (res.dates[0]) !== "undefined" ? convertDate(res.dates[0].start, 'dateConvert') : ""}</p>
-                              <p> ${typeof (res.dates[1]) !== "undefined" && typeof (res.dates[1].start) !== "undefined" ? convertDate(res.dates[1].start, 'dateConvert') : ""}</p>
-                          </div>
-                          <div class="spaces">
-                              <p> ${typeof (res.dates[0].availability) !== "undefined" ? res.dates[0].availability + " spaces left" : ""}</p>
-                              <p> ${typeof (res.dates[1]) !== "undefined" && typeof (res.dates[1].availability) !== "undefined" ? res.dates[1].availability + " spaces left" : ""}</p>
-                          </div>
-                      </div>`
-                        })
-                    */ 
-                    }
-                </div>
-                <button class="viewMore col-6 col-sm-6 col-md-12" data-toggle="collapse" data-target="#viewMore-${index}" >View More</button>
+                <button type="button" class="viewMore datesAndAvailability col-6 col-sm-6 col-md-12" data-toggle="popover" data-placement="bottom"
+                title="View More" data-content="${viewMoreDates}">View More</button>
                 
             </div>
         </div>  
     </div>
 </div>`;
+}
+
+function getGallery(result,primaryImg){
+    let gallery ="";
+    //get all images by LAZY LOADING.
+    primaryImg.forEach((img, i) => {
+        if (typeof (img.url) !== "undefined" && img.url !== "")
+            gallery += `<a href="${img.url}" class="lightbox ${i !== 0 ? ' hidden ' : ''}" data-gallery="${result.name}" data-toggle="lightbox" data-type="image">
+            ${i == 0 ? `<img src="${img.url}" class="primaryImg" title="${result.name}" alt="${result.name}" />` : ''}  </a>`;
+    })
+    return gallery;
+}
+function moreDates(result) {
+    let viewMoreDates = "";
+    let dateStartingPoint = 0;
+    if (checkValidation(result.dates)) {
+        result.dates.forEach((res, i) => {
+            if (res.start === result.dates[0].start) {
+                dateStartingPoint = i + 2;
+                return;
+            }
+        })
+    }
+    for (let i = dateStartingPoint; i < result.dates.length; i++) {
+        if (typeof (result.dates[i]) !== "undefined" && typeof (result.dates[i].availability) !== "undefined" && result.dates[i].availability > 0) {
+            viewMoreDates += `<div class='datesAndSpaces'>
+        <div class='dates'>
+            <p>${typeof (result.dates[i]) !== "undefined" ? convertDate(result.dates[i].start, 'dateConvert') : ''}</p>
+        </div>
+        <div class='spaces'>
+            <p>${typeof (result.dates[i]) !== "undefined" && result.dates[i].availability !== "undefined" ? result.dates[i].availability + ' spaces left' : ''}</p>
+            </div> </div>`
+        }
+        if (dateStartingPoint + 5 == i) break;
+    }
+    if (viewMoreDates == "")
+        viewMoreDates = `<div><p>There's no more available dates for <span class='text-bold'>'${result.name}'</span> tour.</p></div>`;
+    return viewMoreDates;
+
 }
 function spinner(bool) {
     if (bool) {
