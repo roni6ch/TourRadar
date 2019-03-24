@@ -15,7 +15,8 @@ let filteredDate = "";
             createListView(data);
             createMonthsFilter();
             $('.sortPicker').selectpicker();
-            $('.datesAndAvailability').popover({ html: true, container: 'body', trigger: 'focus' })
+            $('.datesAndAvailability').popover({ html: true, container: 'body', trigger: 'focus' });
+            $('.lazyLoading').Lazy();
             spinner(false);
         });
 })(jQuery);
@@ -47,7 +48,8 @@ function createListView(results) {
     });
 
     $("#travelResults").append(output);
-    $('.datesAndAvailability').popover({ html: true, container: 'body', trigger: 'focus' })
+    $('.datesAndAvailability').popover({ html: true, container: 'body', trigger: 'focus' });
+    $('.lazyLoading').Lazy();
 }
 function createRows(result, primaryImg) {
 
@@ -108,8 +110,8 @@ function createRows(result, primaryImg) {
                     </div>
                 </div>
                 
-                <button type="button" class="viewMore datesAndAvailability col-6 col-sm-6 col-md-12" data-toggle="popover" data-placement="bottom"
-                title="View More" data-content="${viewMoreDates}">View More</button>
+                <a tabindex="0" class="viewMore datesAndAvailability col-6 col-sm-6 col-md-12" data-toggle="popover" data-placement="bottom"
+                title="View More" data-content="${viewMoreDates}">View More</a>
                 
             </div>
         </div>  
@@ -123,7 +125,7 @@ function getGallery(result,primaryImg){
     primaryImg.forEach((img, i) => {
         if (typeof (img.url) !== "undefined" && img.url !== "")
             gallery += `<a href="${img.url}" class="lightbox ${i !== 0 ? ' hidden ' : ''}" data-gallery="${result.name}" data-toggle="lightbox" data-type="image">
-            ${i == 0 ? `<img src="${img.url}" class="primaryImg" title="${result.name}" alt="${result.name}" />` : ''}  </a>`;
+            ${i == 0 ? `<img  data-src="${img.url}" class="primaryImg lazyLoading" title="${result.name}" alt="${result.name}" />` : ''}  </a>`;
     })
     return gallery;
 }

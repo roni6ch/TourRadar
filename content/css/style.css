@@ -404,6 +404,8 @@ select::-ms-expand {
 }
 .viewMore {
   background: #409cd1;
+  background-color: #409cd1;
+  text-align: center;
   color: #fff;
   width: 100%;
   border: 0px;
@@ -412,6 +414,12 @@ select::-ms-expand {
   margin-top: 5px;
   font-size: 14px;
   float: right;
+  cursor: pointer;
+}
+a.viewMore:hover{
+  text-decoration:none;
+  color:#fff;
+  opacity: 0.85;
 }
 @media (max-width: 768px) {
   .days {
