@@ -29,28 +29,38 @@ function createListView(results) {
     let output = '';
     $("#travelResults").html('');
 
-    results.forEach((result) => {
-        if (checkValidation(result) && checkValidation(result.dates) && checkValidation(result.images)) {
-            let primaryImg = result.images.filter((img) => {
-                if (checkValidation(img.is_primary) && checkValidation(img.url))
-                    return img;
-            });
-            if (primaryImg.length == 0 && typeof (result.images[0].url) !== 'undefined' && result.images[0].url !== "") {
-                primaryImg = result.images;
+    results.forEach((result,index) => {
+        let primaryImg = [{ url: "" }];
+        if (checkValidation(result) && checkValidation(result.dates)) {
+            if (checkValidation(result.images)) {
+                primaryImg = _.sortBy(result.images, function (img) {
+                    //sort is_primary to first location in array
+                    return typeof (img.is_primary) !== "undefined" && typeof (img.url) !== "undefined" && img.is_primary && img.url !== "" ? 0 : 1;
+                });
             }
-            let stars = getRatingStars(result.rating);
-            output += createRows(result, primaryImg, stars);
+            else {
+                primaryImg[0].url = "content/images/noimage.png";
+            }
+            output += createRows(result, primaryImg,index);
         }
     });
 
     $("#travelResults").append(output);
 }
-function createRows(result, primaryImg, stars) {
-    return `<li class="travelWrapper row  slide-top ">
+function createRows(result, primaryImg,index) {
+    let gallery = "";
+    let stars = typeof (result.rating) !== "undefined" ? getRatingStars(result.rating) : "";
+    //get all images by LAZY LOADING.
+    primaryImg.forEach((img, i) => {
+        if (typeof (img.url) !== "undefined" && img.url !== "")
+            gallery += `<a href="${img.url}" class="lightbox ${i !== 0 ? ' hidden ' : ''}" data-gallery="${result.name}" data-toggle="lightbox" data-type="image">
+            ${i == 0 ? `<img src="${img.url}" class="primaryImg" title="${result.name}" alt="${result.name}" />` : ''}  </a>`;
+    })
+
+    return `<li id="accordion" class="travelWrapper row slide-top ">
     <div class="imageWrapper col-12 col-sm-6 col-md-3 p-0">
-        <a href="${primaryImg[0].url}" class="lightbox" data-gallery=${result.name} data-toggle="lightbox" data-type="image">
-            <img src="${primaryImg[0].url}" class="primaryImg" title="${result.name}" alt="${result.name}" /></a>
-       <div class="heart" />
+    ${ gallery }
+        <div class="heart" />
     </div>
     <div class="travelDetails col-12 col-sm-6 col-md-9 pb-2">
     ${checkValidation(result.dates[0].discount) ? `<div class="triangle"><span>-${result.dates[0].discount}</span></div>` : ""}
@@ -59,7 +69,7 @@ function createRows(result, primaryImg, stars) {
                 <h1 class="travelTitle">${result.name}</h1>
                 <div class="starsAndReviews">
                     <div class="stars">${stars}</div>
-                    <div class="reviews">${result.reviews} reviews</div>
+                    ${typeof (result.reviews) !== "undefined" ? `<div class="reviews"> ${result.reviews} reviews</div>` : ""}
                 </div>
                 <div class="description">
                    <p>"${result.description}"</p>
@@ -91,15 +101,33 @@ function createRows(result, primaryImg, stars) {
             </div>
                 <div class="datesAndSpaces mt-1">
                     <div class="dates">
-                        <p> ${typeof(result.dates[0].start) !== "undefined" ? convertDate(result.dates[0].start, 'dateConvert') : ""}</p>
-                        <p> ${typeof(result.dates[1]) !== "undefined" && typeof(result.dates[1].start) !=="undefined" ? convertDate(result.dates[1].start, 'dateConvert') : ""}</p>
+                        <p> ${typeof (result.dates[0].start) !== "undefined" ? convertDate(result.dates[0].start, 'dateConvert') : ""}</p>
+                        <p> ${typeof (result.dates[1]) !== "undefined" && typeof (result.dates[1].start) !== "undefined" ? convertDate(result.dates[1].start, 'dateConvert') : ""}</p>
                     </div>
                     <div class="spaces">
-                        <p> ${typeof(result.dates[0].availability) !== "undefined" ? result.dates[0].availability + " spaces left" : ""}</p>
-                        <p> ${typeof(result.dates[1]) !== "undefined" && typeof(result.dates[1].availability) !== "undefined" ? result.dates[1].availability + " spaces left" : ""}</p>
+                        <p> ${typeof (result.dates[0].availability) !== "undefined" ? result.dates[0].availability + " spaces left" : ""}</p>
+                        <p> ${typeof (result.dates[1]) !== "undefined" && typeof (result.dates[1].availability) !== "undefined" ? result.dates[1].availability + " spaces left" : ""}</p>
                     </div>
                 </div>
-                <button class="viewMore col-6 col-sm-6 col-md-12">View More</button>
+                
+                <div id="viewMore-${index}" class="collapse datesAndSpaces mt-1 " aria-labelledby="headingOne" data-parent="#accordion">
+                    ${console.log("todo - fix accordion")/*  travelResults[index].forEach((res) => {
+                          `<div class="datesAndSpaces mt-1">
+                          <div class="dates">
+                              <p> ${typeof (res.dates[0]) !== "undefined" ? convertDate(res.dates[0].start, 'dateConvert') : ""}</p>
+                              <p> ${typeof (res.dates[1]) !== "undefined" && typeof (res.dates[1].start) !== "undefined" ? convertDate(res.dates[1].start, 'dateConvert') : ""}</p>
+                          </div>
+                          <div class="spaces">
+                              <p> ${typeof (res.dates[0].availability) !== "undefined" ? res.dates[0].availability + " spaces left" : ""}</p>
+                              <p> ${typeof (res.dates[1]) !== "undefined" && typeof (res.dates[1].availability) !== "undefined" ? res.dates[1].availability + " spaces left" : ""}</p>
+                          </div>
+                      </div>`
+                        })
+                    */ 
+                    }
+                </div>
+                <button class="viewMore col-6 col-sm-6 col-md-12" data-toggle="collapse" data-target="#viewMore-${index}" >View More</button>
+                
             </div>
         </div>  
     </div>
@@ -149,7 +177,7 @@ function createMonthsFilter() {
         }))
     })));
     /* sort the dates array */
-    filteredMonths = _.orderBy(filteredMonths, [(date) => { return new Date(date); }], ['desc']);
+    filteredMonths = _.orderBy(filteredMonths, [(date) => { return new Date(fixIEDate(date)); }], ['desc']);
     /* create the dynamic select option box */
     let newYear = "";
     output += `<optgroup label="Departure Date"><option value="resetFilter">Remove Filter</option></optgroup>`;
@@ -219,7 +247,8 @@ $(".filterBy").change(() => {
         filteredList = [];
     }
     else {
-        filteredDate = convertDate($(".selectpicker").val(), 'getNumberedDate');
+        /* fix Date for IE */
+        filteredDate = convertDate(fixIEDate($(".selectpicker").val()), 'getNumberedDate');
         /* copy nested object */
         filteredList = JSON.parse(JSON.stringify(travelResults));
         /* remove unnecessary dates */
@@ -231,3 +260,12 @@ $(".filterBy").change(() => {
     }
     sortList();
 });
+
+function fixIEDate(data) {
+    let splittedDate = data.split(" ");
+    splittedDate[0] = Number(fullMonthNames.indexOf(splittedDate[0]) + 1);
+    if (splittedDate[0] < 10)
+        splittedDate[0] = "0" + splittedDate[0];
+    let date = `${splittedDate[1]}-${splittedDate[0]}`;
+    return date;
+}
